@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RevoFun Arcade</title>
+
+  <!-- CUSTOM CSS -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- BOX ICONS -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+</head>
+
+<body class="home-page">
+  <div class="page-shell">
+    
+    <!-- HEADER -->
+    <header class="nav">
+      <a class="brand" href="index.html">
+        <span class="brand-mark"><img src="assets/revou-logo.png" alt="" width="36" height="36" role="presentation"></span>
+        <span>RevoFun Arcade</span>
+      </a>
+      <nav aria-label="Primary">
+        <a href="#games">Game</a>
+      </nav>
+    </header>
+
+    <main>
+
+      <!-- SECTION 1 : HERO DESIGN -->
+      <section class="hero">
+        <div class="hero-copy-block">
+          <p class="eyebrow">Mini Game</p>
+          <p class="hero-ribbon">Arcade mode is live</p>
+          <h1>Arcade, Logic, Reflex.</h1>
+          <p class="hero-copy">
+            Jump into sharp decisions and quick matchups. Everything runs in the browser,
+            based on Javascript DOM manipulation.
+          </p>
+
+          <div class="hero-actions">
+            <a href="#games" class="btn">Explore Games</a>
+          </div>
+
+          <div class="hero-marquee" aria-hidden="true">
+            <span>Fast</span>
+            <span>Decision</span>
+            <span>Quick</span>
+            <span>Reflexes</span>
+            <span>Addictive</span>
+            <span>Challenges</span>
+          </div>
+
+        </div>
+
+        <div class="hero-showcase" aria-hidden="true">
+          <figure class="showcase-tile tile-rock">
+            <img src="assets/read.png" alt="Read the opponent icon">
+            <figcaption>Read the opponent</figcaption>
+          </figure>
+          <figure class="showcase-tile tile-paper">
+            <img src="assets/change.png" alt="Change the pattern icon">
+            <figcaption>Change the pattern</figcaption>
+          </figure>
+          <figure class="showcase-tile tile-scissors">
+            <img src="assets/win.png" alt="Win the duel icon">
+            <figcaption>Win the duel</figcaption>
+          </figure>
+          <figure class="showcase-tile tile-mole">
+            <img src="assets/strike.png" alt="Strike Fast icon">
+            <figcaption>Strike Fast</figcaption>
+          </figure>
+        </div>
+      </section>
+
+
+      <!-- SECTION 2 : GAMES CARDS OPTION -->
+      <section id="games" class="games-section">
+        <div class="section-heading">
+          <p class="eyebrow">Choose Your Challenge</p>
+          <h2>Rock Paper Scissors is ready to play.</h2>
+        </div>
+
+        <div class="games">
+          <article class="card card--rps">
+            <div class="card-art">
+              <img src="assets/Rock.png" alt="Rock icon">
+              <img src="assets/Paper.png" alt="Paper icon">
+              <img src="assets/Scissors.png" alt="Scissors icon">
+            </div>
+            <span class="card-tag">Logic</span>
+            <h3>Rock Paper Scissors</h3>
+            <p>Battle the computer in a punchy head-to-head match with animated move reveals.</p>
+            <p class="card-note">Best for quick rounds</p>
+            <a class="card-link" href="pages/rps.html">Play Now</a>
+          </article>
+
+          <article class="card card--whack">
+            <div class="card-art card-art-single">
+              <img src="assets/Mole.png" alt="Mole icon">
+            </div>
+            <span class="card-tag">Timing</span>
+            <h3>Whack-a-Mole</h3>
+            <p>Catch the mole before it disappears and keep your rhythm steady as the timer drops.</p>
+            <p class="card-note">Best for pure speed and fast reflex practice.</p>
+            <a class="card-link" href="pages/whack.html">Play Now</a>
+          </article>
+
+          <article class="card card--memory">
+            <div class="card-art card-art-memory">
+              <img src="assets/digimon.png" alt="" role="presentation">
+              <img src="assets/digimon1.png" alt="" role="presentation">
+              <img src="assets/digimon2.png" alt="" role="presentation">
+              <img src="assets/digimon3.png" alt="" role="presentation">
+            </div>
+            <span class="card-tag">Focus</span>
+            <h3>Memory Match</h3>
+            <p>Flip, remember, and clear the board with fewer moves for a stronger final score.</p>
+            <p class="card-note">Best for calm focus with satisfying card reveals.</p>
+            <a class="card-link" href="#">Play Now</a>
+          </article>
+        </div>
+      </section>  
+
+    </main>
+  </div>
+
+
+  <!-- SECTION FOOTER : FOOTER DESIGN -->
+  <footer class="footer" aria-labelledby="footer-brand">
+    <div class="footer-container">
+      <section class="footer-branding">
+        <a class="footer-brand" href="index.html" id="footer-brand">
+          <span class="brand-mark"><img src="assets/revou-logo.png" alt="RevoFun Logo" width="36" height="36"></span>
+          <span>RevoFun Arcade</span>
+        </a>
+        <p class="footer-tagline">“Skill-based browser games built with logic and interaction.”</p>
+      </section>
+
+      <nav class="footer-links" aria-label="Quick links">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="https://revou-fsse-feb26.github.io/milestone-1-Stayonclassic/">About Me</a></li>
+        </ul>
+      </nav>
+
+      <section class="footer-social" aria-label="Social links">
+        <h3>Social</h3>
+        <div class="footer-social-list">
+          <a href="https://github.com/Stayonclassic" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+            <i class='bx bxl-github'></i>
+            <span>GitHub</span>
+          </a>
+          <a href="https://www.linkedin.com/in/leonardusrio/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+            <i class='bx bxl-linkedin-square'></i>
+            <span>LinkedIn</span>
+          </a>
+          <a href="https://www.instagram.com/sweettoothyo/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <i class='bx bxl-instagram'></i>
+            <span>Instagram</span>
+          </a>
+        </div>
+      </section>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2026 RevoFun Arcade made by Rio Leonardus. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- ICON BACK TO TOP -->
+  <button id="scroll-top-btn" class="scroll-top-btn" type="button" aria-label="Scroll to top">
+    <i class='bx bx-up-arrow-alt' aria-hidden="true"></i>
+  </button>
+
+  <script>
+    const scrollTopButton = document.getElementById("scroll-top-btn");
+
+    if (scrollTopButton) {
+      scrollTopButton.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    }
+  </script>
+</body>
+</html>

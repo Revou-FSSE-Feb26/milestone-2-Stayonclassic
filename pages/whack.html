@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Whack-a-Mole</title>
+  <link rel="stylesheet" href="../css/game.css">
+</head>
+
+<body class="game-body game-whack">
+  <main class="arcade-shell">
+    <!-- PAGE HEADER -->
+    <header class="arcade-top">
+      <p class="eyebrow">Timing Challenge</p>
+      <h1>Whack-a-Mole</h1>
+    </header>
+
+    <div class="arcade-layout">
+      <!-- SIDEBAR PLAYER STATUS, NAME, TIME & SCORE -->
+      <aside class="arcade-sidebar">
+        <div class="player-field">
+          <label for="player-name">Player Name</label>
+          <input id="player-name" type="text" maxlength="20" placeholder="Enter player name" aria-describedby="whack-player-help">
+          <p class="helper-text" id="whack-player-help">Use a nickname for leaderboard saves.</p>
+        </div>
+
+        <div class="hud" aria-label="Whack-a-Mole game status">
+          <p class="status"><strong>Score:</strong> <span id="whack-score">0</span></p>
+          <p class="status"><strong>Time:</strong> <span id="whack-time">20</span>s</p>
+        </div>
+
+        <div class="game-actions">
+          <button id="whack-start" type="button">Start Game</button>
+          <button id="whack-reset" type="button">Reset</button>
+        </div>
+
+        <a class="back-link" href="../index.html">Back to Home</a>
+      </aside>
+
+      <!-- GAME STAGE -->
+      <section class="arcade-stage">
+        <div class="stage-card">
+          <div class="whack-stage" id="whack-stage">
+            <div class="whack-grid" id="whack-grid">
+              <button class="whack-hole" type="button" data-hole="0" aria-label="Mole hole 1"><img src="../assets/Mole.png" alt="Mole"></button>
+              <button class="whack-hole" type="button" data-hole="1" aria-label="Mole hole 2"><img src="../assets/Mole.png" alt="Mole"></button>
+              <button class="whack-hole" type="button" data-hole="2" aria-label="Mole hole 3"><img src="../assets/Mole.png" alt="Mole"></button>
+              <button class="whack-hole" type="button" data-hole="3" aria-label="Mole hole 4"><img src="../assets/Mole.png" alt="Mole"></button>
+              <button class="whack-hole" type="button" data-hole="4" aria-label="Mole hole 5"><img src="../assets/Mole.png" alt="Mole"></button>
+              <button class="whack-hole" type="button" data-hole="5" aria-label="Mole hole 6"><img src="../assets/Mole.png" alt="Mole"></button>
+              <button class="whack-hole" type="button" data-hole="6" aria-label="Mole hole 7"><img src="../assets/Mole.png" alt="Mole"></button>
+              <button class="whack-hole" type="button" data-hole="7" aria-label="Mole hole 8"><img src="../assets/Mole.png" alt="Mole"></button>
+              <button class="whack-hole" type="button" data-hole="8" aria-label="Mole hole 9"><img src="../assets/Mole.png" alt="Mole"></button>
+            </div>
+            <div class="hammer-cursor hide" id="hammer-cursor" aria-hidden="true"></div>
+          </div>
+
+          <p class="status status-panel" id="whack-status" aria-live="polite">Press start to begin.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="../js/whack.js"></script>
+</body>
+</html>

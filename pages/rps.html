@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rock, Paper, Scissors</title>
+  <link rel="stylesheet" href="../css/game.css">
+</head>
+
+<body class="game-body game-rps">
+  <main class="arcade-shell">
+    <!-- HEADER -->
+    <header class="arcade-top">
+      <p class="eyebrow">Versus Challenge</p>
+      <h1>Rock Paper Scissors</h1>
+    </header>
+
+    <div class="arcade-layout">
+      <!-- SIDEBAR PLAYER STATUS, NAME, SCORE -->
+      <aside class="arcade-sidebar">
+        <div class="player-field">
+          <label for="player-name">Player Name</label>
+          <input id="player-name" type="text" maxlength="20" placeholder="Enter player name" aria-describedby="rps-player-help">
+          <p class="helper-text" id="rps-player-help">Use a nickname for leaderboard saves.</p>
+        </div>
+
+        <div class="hud rps-hud" aria-label="Rock Paper Scissors score summary">
+          <p class="status"><strong>Wins:</strong> <span id="rps-wins">0</span></p>
+          <p class="status"><strong>Losses:</strong> <span id="rps-losses">0</span></p>
+          <p class="status"><strong>Draws:</strong> <span id="rps-draws">0</span></p>
+        </div>
+
+        <div class="game-actions">
+          <button id="rps-reset" type="button">Reset Match</button>
+        </div>
+
+        <a class="back-link" href="../index.html">Back to Home</a>
+      </aside>
+
+      <!-- GAME STAGE -->
+      <section class="arcade-stage">
+        <div class="stage-card">
+          <div class="versus-preview" id="rps-preview" aria-hidden="true">
+            <div class="preview-token choice-box">
+              <img id="player-preview" src="../assets/Rock.png" alt="">
+              <span>You</span>
+            </div>
+            <span class="preview-versus vs">VS</span>
+            <div class="preview-token choice-box">
+              <img id="computer-preview" src="../assets/Rock.png" alt="">
+              <span>CPU</span>
+            </div>
+          </div>
+
+          <div class="game-actions rps-actions">
+            <button class="rps-choice" data-choice="rock" type="button" aria-label="Choose rock">
+              <img src="../assets/Rock.png" alt="Rock">
+              <span>Rock</span>
+            </button>
+            <button class="rps-choice" data-choice="paper" type="button" aria-label="Choose paper">
+              <img src="../assets/Paper.png" alt="Paper">
+              <span>Paper</span>
+            </button>
+            <button class="rps-choice" data-choice="scissors" type="button" aria-label="Choose scissors">
+              <img src="../assets/Scissors.png" alt="Scissors">
+              <span>Scissors</span>
+            </button>
+          </div>
+
+          <p class="status status-panel" id="rps-score">Best for quick rounds and winning streaks.</p>
+          <p class="status status-panel" id="rps-status" data-outcome="idle" aria-live="polite">Result will appear here</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="../js/rps.js"></script>
+</body>
+</html>
