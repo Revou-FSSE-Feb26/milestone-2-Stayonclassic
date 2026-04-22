@@ -1,14 +1,7 @@
-// Game: Rock Paper Scissors
-// Description: Pick rock, paper, or scissors and play against a random computer choice.
-// Concepts used: DOM manipulation, events, arrays, conditionals
-// GAME FLOW:
-// 1. Player clicks a move button.
-// 2. Game runs countdown, then randomly picks computer move.
-// 3. Result updates score/status.
-// Code map: Rock Paper Scissors round engine.
-// Flow: wire DOM -> playRound() starts countdown -> resolveRound() computes result.
+// Rock Paper Scissors
+// Player picks a move, computer picks random, then score updates.
 
-// ===== DOM REFERENCES =====
+// ===== Get elements from HTML =====
 const rpsButtons = document.querySelectorAll(".rps-choice");
 const rpsWins = document.getElementById("rps-wins");
 const rpsLosses = document.getElementById("rps-losses");
@@ -20,7 +13,7 @@ const rpsPreview = document.getElementById("rps-preview");
 const playerPreview = document.getElementById("player-preview");
 const computerPreview = document.getElementById("computer-preview");
 
-// ===== STATIC DATA =====
+// ===== Game data =====
 const rpsChoices = ["rock", "paper", "scissors"];
 const rpsImages = {
   rock: "../assets/Rock.png",
@@ -34,64 +27,73 @@ const score = {
   draws: 0,
 };
 
-// ===== CONFIG =====
+// ===== Timing setup =====
 const countdownSteps = ["Rock...", "Paper...", "Scissors...", "Shoot!"];
 const COUNTDOWN_STEP_MS = 170;
 const COUNTDOWN_FINAL_DELAY_MS = 60;
 const SHAKE_DURATION_MS = 820;
 const RESULT_POP_MS = 320;
 
-// ===== STATE =====
-let bestSavedPlayerScore = 0;
+// ===== Variables that change while playing =====
+let bestPlayerScore = 0;
 let isResolvingRound = false;
 let countdownTimerIds = [];
 let duelShakeTimerId = 0;
 
-// ===== UI FUNCTIONS =====
-// This shows a message in the status box.
+// Update status text when round state changes.
 function setStatusText(text) {
   rpsStatus.textContent = text;
   pulseElement(rpsStatus);
 }
 
-// This enables/disables move buttons.
+// Lock/unlock move buttons.
 function setButtonsDisabled(disabled) {
   rpsButtons.forEach((button) => {
     button.disabled = disabled;
   });
 }
 
-// This highlights the selected move.
+// Highlight the move selected by player.
 function updateSelectedChoice(choice) {
   rpsButtons.forEach((button) => {
     button.classList.toggle("is-selected", button.dataset.choice === choice);
   });
 }
 
-// This updates score text on screen.
+// Show latest score values on screen.
 function updateRpsScore() {
   rpsWins.textContent = String(score.player);
   rpsLosses.textContent = String(score.computer);
   rpsDraws.textContent = String(score.draws);
-  rpsScore.textContent = `Best match streak saved: ${bestSavedPlayerScore} win${bestSavedPlayerScore === 1 ? "" : "s"}.`;
+  rpsScore.textContent = `Best match streak saved: ${bestPlayerScore} win${bestPlayerScore === 1 ? "" : "s"}.`;
   pulseElement(rpsScore);
 }
 
-// This replays the pulse animation class.
+// Play simple pulse effect to make text updates clear.
 function pulseElement(element) {
   element.classList.remove("is-pulsing");
   void element.offsetWidth;
   element.classList.add("is-pulsing");
 }
 
-// ===== GAME LOGIC =====
-// This picks a random move for the CPU.
+// Stop all running timers before next action.
+function clearCountdownTimers() {
+  countdownTimerIds.forEach((timerId) => {
+    window.clearTimeout(timerId);
+  });
+  window.clearTimeout(duelShakeTimerId);
+  duelShakeTimerId = 0;
+  rpsPreview.classList.remove("is-duel-shake");
+  countdownTimerIds = [];
+}
+
+// Pick random move for computer.
 function getComputerChoice() {
   const index = Math.floor(Math.random() * rpsChoices.length);
   return rpsChoices[index];
 }
 
-// This compares moves and decides the round.
+// Compare both moves and decide result.
 function decideRound(playerChoice, computerChoice) {
   if (playerChoice === computerChoice) {
     score.draws += 1;
@@ -132,19 +134,7 @@ function decideRound(playerChoice, computerChoice) {
   };
 }
 
-// ===== GAME FLOW =====
-// This clears active timers before a new round.
-function clearCountdownTimers() {
-  countdownTimerIds.forEach((timerId) => {
-    window.clearTimeout(timerId);
-  });
-  window.clearTimeout(duelShakeTimerId);
-  duelShakeTimerId = 0;
-  rpsPreview.classList.remove("is-duel-shake");
-  countdownTimerIds = [];
-}
-
-// This starts a new round.
+// Start one round when player clicks a move button.
 function playRound(playerChoice) {
   if (isResolvingRound) {
     return;
@@ -166,7 +156,7 @@ function playRound(playerChoice) {
   runCountdown(playerChoice);
 }
 
-// This runs the Rock-Paper-Scissors countdown.
+// Show Rock-Paper-Scissors-Shoot countdown.
 function runCountdown(playerChoice) {
   countdownSteps.forEach((label, index) => {
     const timerId = window.setTimeout(() => {
@@ -182,7 +172,32 @@ function runCountdown(playerChoice) {
   countdownTimerIds.push(resolveTimer);
 }
 
-// This resolves the round and updates the UI.
+// Run one-time result animation.
+function playResultAnimation() {
+  rpsStatus.classList.remove("animate-pop");
+  void rpsStatus.offsetWidth;
+  rpsStatus.classList.add("animate-pop");
+  window.setTimeout(() => {
+    rpsStatus.classList.remove("animate-pop");
+  }, RESULT_POP_MS);
+}
+
+// Save score only if it beats current best score in this session.
+function saveBestRpsScore() {
+  if (!window.RevoLeaderboard || score.player <= bestPlayerScore) {
+    return;
+  }
+
+  bestPlayerScore = score.player;
+  window.RevoLeaderboard.addScore(
+    "rps",
+    score.player,
+    `${score.player} win${score.player === 1 ? "" : "s"} in match`,
+    window.RevoLeaderboard.getPlayerName()
+  );
+}
+
+// Finish round after countdown ends.
 function resolveRound(playerChoice) {
   const computerChoice = getComputerChoice();
   const roundResult = decideRound(playerChoice, computerChoice);
@@ -191,58 +206,42 @@ function resolveRound(playerChoice) {
   rpsPreview.classList.remove("is-dueling", "is-duel-shake", "is-resolving");
   void rpsPreview.offsetWidth;
   rpsPreview.classList.add("is-resolving");
+
   setStatusText(roundResult.message);
   rpsStatus.dataset.outcome = roundResult.outcome;
-  rpsStatus.classList.remove("animate-pop");
-  void rpsStatus.offsetWidth;
-  rpsStatus.classList.add("animate-pop");
-  window.setTimeout(() => {
-    rpsStatus.classList.remove("animate-pop");
-  }, RESULT_POP_MS);
+  playResultAnimation();
+
   isResolvingRound = false;
-
-  if (window.RevoLeaderboard && score.player > bestSavedPlayerScore) {
-    bestSavedPlayerScore = score.player;
-    window.RevoLeaderboard.addScore(
-      "rps",
-      score.player,
-      `${score.player} win${score.player === 1 ? "" : "s"} in match`,
-      window.RevoLeaderboard.getPlayerName()
-    );
-  }
-
+  saveBestRpsScore();
   updateRpsScore();
   setButtonsDisabled(false);
 }
 
-// This resets the game to the default state.
+// Reset everything when reset button is clicked.
 function resetRpsGame() {
   clearCountdownTimers();
   score.player = 0;
   score.computer = 0;
   score.draws = 0;
-  bestSavedPlayerScore = 0;
+  bestPlayerScore = 0;
   isResolvingRound = false;
   setButtonsDisabled(false);
   updateSelectedChoice("");
   playerPreview.src = rpsImages.rock;
-  computerPreview.src = rpsImages.rock;
+  computerPreview.src = rpsImages.scissors;
   rpsPreview.classList.remove("is-dueling", "is-duel-shake", "is-resolving");
   rpsStatus.dataset.outcome = "idle";
   rpsStatus.textContent = "Choose your move to begin the showdown.";
   updateRpsScore();
 }
 
-// ===== EVENTS =====
-// This handles move button clicks.
+// ===== Events =====
 rpsButtons.forEach((button) => {
   button.addEventListener("click", () => {
     playRound(button.dataset.choice);
   });
 });
 
-// This handles the reset button click.
 rpsResetButton.addEventListener("click", resetRpsGame);
 
-// Start page in reset state.
 resetRpsGame();

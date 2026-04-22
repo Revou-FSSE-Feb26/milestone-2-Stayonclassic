@@ -1,14 +1,7 @@
-// Game: Whack-a-Mole
-// Description: Hit the active mole quickly before it hides and collect as many points as possible.
-// Concepts used: DOM manipulation, events, arrays, conditionals
-// GAME FLOW:
-// 1. Player starts game and countdown begins.
-// 2. One random mole appears at a time in the grid.
-// 3. Hits increase score until timer ends, then best score is saved.
-// Code map: Whack-a-Mole loop with timed mole spawning.
-// Flow: startWhackGame() starts timer -> showNextMole()/hideCurrentMole() cycle holes -> hits update score.
+// Whack-a-Mole
+// Hit moles before they hide to get points.
 
-// ===== DOM REFERENCES =====
+// ===== Get elements from HTML =====
 const whackScore = document.getElementById("whack-score");
 const whackTime = document.getElementById("whack-time");
 const whackStatus = document.getElementById("whack-status");
@@ -19,57 +12,42 @@ const whackGrid = document.getElementById("whack-grid");
 const hammerCursor = document.getElementById("hammer-cursor");
 const whackHoles = Array.from(document.querySelectorAll(".whack-hole"));
 
-// ===== STATIC DATA =====
-const WHACK_GAME_SECONDS = 20;
-
-// ===== CONFIG =====
-const DEFAULT_NEXT_HOLE_DELAY_MS = 140;
-const AVOID_REPEAT_NEXT_HOLE_DELAY_MS = 130;
-const START_NEXT_HOLE_DELAY_MS = 220;
-const HIT_NEXT_HOLE_DELAY_MS = 110;
-const HIDE_MOLE_DELAY_MS = 900;
-const HIDE_CLASS_CLEAR_DELAY_MS = 190;
-const HIT_CLASS_CLEAR_DELAY_MS = 220;
-const CURSOR_RELEASE_DELAY_MS = 110;
-const COUNTDOWN_INTERVAL_MS = 1000;
-const URGENT_TIME_SECONDS = 5;
-
-// ===== STATE =====
+// ===== Variables that change while playing =====
 let activeHole = -1;
 let previousHole = -1;
 let gameActive = false;
 let score = 0;
-let timeLeft = WHACK_GAME_SECONDS;
+let timeLeft = 20;
 let hideTimer = 0;
 let nextHoleTimer = 0;
 let countdownTimer = 0;
 let cursorReleaseTimer = 0;
 let bestSavedScore = 0;
 
-// ===== UI FUNCTIONS =====
-// This replays the pulse animation class.
+// ===== Screen updates =====
+// Pulse text so player notices updates.
 function pulseElement(element) {
   element.classList.remove("is-pulsing");
   void element.offsetWidth;
   element.classList.add("is-pulsing");
 }
 
-// This updates score and timer text.
+// Update score and timer on screen.
 function updateWhackHud() {
   whackScore.textContent = String(score);
   whackTime.textContent = String(timeLeft);
-  whackTime.classList.toggle("is-urgent", gameActive && timeLeft <= URGENT_TIME_SECONDS);
+  whackTime.classList.toggle("is-urgent", gameActive && timeLeft <= 5);
 }
 
-// This clears all running timers.
+// Stop all active timers.
 function clearWhackTimers() {
   window.clearInterval(countdownTimer);
   window.clearTimeout(hideTimer);
   window.clearTimeout(nextHoleTimer);
 }
 
-// ===== GAME LOGIC =====
-// This clears current mole classes.
+// ===== Mole spawn and hide =====
+// Clear every hole state before showing next mole.
 function clearHoleState() {
   whackHoles.forEach((hole) => {
     hole.classList.remove("is-active", "is-hiding", "is-hit");
@@ -77,7 +55,7 @@ function clearHoleState() {
   activeHole = -1;
 }
 
-// This picks the next hole index.
+// Pick random hole, avoid same hole twice in a row.
 function getNextHoleIndex() {
   let nextHole = Math.floor(Math.random() * whackHoles.length);
 
@@ -89,13 +67,13 @@ function getNextHoleIndex() {
   return nextHole;
 }
 
-// This schedules the next mole spawn.
-function scheduleNextHole(delay = DEFAULT_NEXT_HOLE_DELAY_MS) {
+// Schedule next mole appearance.
+function scheduleNextHole(delay = 140) {
   window.clearTimeout(nextHoleTimer);
   nextHoleTimer = window.setTimeout(showNextMole, delay);
 }
 
-// This hides the active mole.
+// Hide current mole after timeout or after a hit.
 function hideCurrentMole(index) {
   const hole = whackHoles[index];
 
@@ -109,14 +87,14 @@ function hideCurrentMole(index) {
 
   window.setTimeout(() => {
     hole.classList.remove("is-hiding");
-  }, HIDE_CLASS_CLEAR_DELAY_MS);
+  }, 190);
 
   if (gameActive) {
-    scheduleNextHole(AVOID_REPEAT_NEXT_HOLE_DELAY_MS);
+    scheduleNextHole(130);
   }
 }
 
-// This shows the next mole.
+// Show one mole and start its hide timer.
 function showNextMole() {
   if (!gameActive) {
     return;
@@ -131,15 +109,16 @@ function showNextMole() {
     if (gameActive && activeHole !== -1) {
       hideCurrentMole(activeHole);
     }
-  }, HIDE_MOLE_DELAY_MS);
+  }, 900);
 }
 
-// This turns hammer swing class on/off.
+// ===== Hammer cursor =====
+// Change hammer active style for click effect.
 function setHammerActive(active) {
   hammerCursor.classList.toggle("is-active", active);
 }
 
-// This moves hammer cursor inside stage.
+// Move hammer with mouse inside game stage.
 function moveHammer(event) {
   if (!window.matchMedia("(pointer:fine)").matches) {
     return;
@@ -164,7 +143,7 @@ function moveHammer(event) {
   hammerCursor.style.top = `${y}px`;
 }
 
-// This plays quick hammer swing feedback.
+// Play quick hammer swing when player clicks.
 function triggerHammerSwing() {
   if (!window.matchMedia("(pointer:fine)").matches) {
     return;
@@ -174,11 +153,11 @@ function triggerHammerSwing() {
   setHammerActive(true);
   cursorReleaseTimer = window.setTimeout(() => {
     setHammerActive(false);
-  }, CURSOR_RELEASE_DELAY_MS);
+  }, 110);
 }
 
-// ===== GAME FLOW =====
-// This stops the game and clears active state.
+// ===== Game flow =====
+// Stop game loop and return controls to idle state.
 function stopWhackGame() {
   gameActive = false;
   clearWhackTimers();
@@ -188,7 +167,7 @@ function stopWhackGame() {
   updateWhackHud();
 }
 
-// This saves only a new best score.
+// Save score only if it's the best score in this session.
 function saveWhackScore() {
   if (!window.RevoLeaderboard || score <= bestSavedScore) {
     return;
@@ -203,7 +182,7 @@ function saveWhackScore() {
   );
 }
 
-// This ends the game when time is up.
+// End game when timer reaches zero.
 function endWhackGame() {
   stopWhackGame();
   saveWhackScore();
@@ -211,18 +190,18 @@ function endWhackGame() {
   pulseElement(whackStatus);
 }
 
-// This starts a fresh game.
+// Start a fresh game when player clicks start.
 function startWhackGame() {
   stopWhackGame();
   score = 0;
-  timeLeft = WHACK_GAME_SECONDS;
+  timeLeft = 20;
   gameActive = true;
   updateWhackHud();
   whackStatus.textContent = "Whack every mole before it ducks.";
   whackGrid.classList.add("is-live");
   whackStartButton.disabled = true;
   pulseElement(whackStatus);
-  scheduleNextHole(START_NEXT_HOLE_DELAY_MS);
+  scheduleNextHole(220);
 
   countdownTimer = window.setInterval(() => {
     timeLeft -= 1;
@@ -231,23 +210,23 @@ function startWhackGame() {
     if (timeLeft <= 0) {
       endWhackGame();
     }
-  }, COUNTDOWN_INTERVAL_MS);
+  }, 1000);
 }
 
-// This resets the UI to idle state.
+// Reset game to initial state.
 function resetWhackGame() {
   stopWhackGame();
   score = 0;
-  timeLeft = WHACK_GAME_SECONDS;
+  timeLeft = 20;
   updateWhackHud();
   whackStatus.textContent = "Press start to begin.";
   pulseElement(whackStatus);
 }
 
-// ===== EVENTS =====
-// This handles clicking each mole hole.
+// ===== Events =====
 whackHoles.forEach((hole, index) => {
   hole.addEventListener("click", () => {
+    // Count hit only if player clicked the active mole.
     if (!gameActive || index !== activeHole) {
       return;
     }
@@ -266,13 +245,12 @@ whackHoles.forEach((hole, index) => {
     window.setTimeout(() => {
       hole.classList.remove("is-hit");
       if (gameActive) {
-        scheduleNextHole(HIT_NEXT_HOLE_DELAY_MS);
+        scheduleNextHole(110);
       }
-    }, HIT_CLASS_CLEAR_DELAY_MS);
+    }, 220);
   });
 });
 
-// These handle mouse events for the hammer cursor.
 whackStage.addEventListener("mousemove", moveHammer);
 whackStage.addEventListener("mouseenter", moveHammer);
 whackStage.addEventListener("mouseleave", () => {
@@ -285,9 +263,7 @@ window.addEventListener("mouseup", () => {
   setHammerActive(false);
 });
 
-// These handle button click events.
 whackStartButton.addEventListener("click", startWhackGame);
 whackResetButton.addEventListener("click", resetWhackGame);
 
-// Start page in reset state.
 resetWhackGame();
