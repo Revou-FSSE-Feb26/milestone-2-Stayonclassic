@@ -221,7 +221,7 @@ body.home-page main {
     var(--panel);
   box-shadow: var(--shadow);
   backdrop-filter: blur(18px);
-  animation: section-rise 0.7s ease-out both;
+  animation: section-rise 0.85s ease-in-out both;
 }
 
 .games-section {
@@ -355,7 +355,7 @@ body.home-page main {
   font-size: 0.82rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  animation: marquee-pulse 3.8s ease-in-out infinite;
+  animation: marquee-pulse 4s ease-in-out infinite;
 }
 
 .hero-marquee span:nth-child(2) {
@@ -404,17 +404,17 @@ body.home-page main {
 }
 
 .showcase-tile {
+  --tile-tilt: -2deg;
   margin: 0;
   padding: 16px;
   border-radius: 24px;
-  transform: rotate(-2deg);
-  animation: float-tile 5.2s ease-in-out infinite;
-  transition: transform 0.28s ease, box-shadow 0.28s ease;
+  animation: float-tile 12s ease-in-out infinite;
+  transition: transform 0.32s ease, box-shadow 0.32s ease, filter 0.32s ease;
 }
 
 .showcase-tile:hover {
-  transform: translateY(-3px) rotate(var(--tile-tilt, -2deg));
-  box-shadow: 0 16px 28px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 12px 22px rgba(0, 0, 0, 0.18);
+  filter: brightness(1.02);
 }
 
 .showcase-tile img,
@@ -456,12 +456,17 @@ body.home-page main {
 .btn:focus-visible,
 .card-link:hover,
 .card-link:focus-visible {
-  transform: translateY(-3px) scale(1.01);
+  transform: translateY(-2px) scale(1.005);
+}
+
+.card-link:hover,
+.card-link:focus-visible {
+  box-shadow: 0 10px 20px rgba(92, 242, 255, 0.14);
 }
 
 .btn:active,
 .card-link:active {
-  transform: translateY(-1px) scale(0.98);
+  transform: translateY(0) scale(0.99);
 }
 
 .games-section,
@@ -571,9 +576,9 @@ body.home-page main {
 
 .card:hover,
 .card:focus-within {
-  transform: translateY(-6px);
+  transform: translateY(-4px);
   border-color: rgba(255, 255, 255, 0.18);
-  box-shadow: 0 24px 40px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 18px 30px rgba(0, 0, 0, 0.2);
 }
 
 .card-art {
@@ -626,7 +631,7 @@ body.home-page main {
 @keyframes section-rise {
   from {
     opacity: 0;
-    transform: translateY(24px);
+    transform: translateY(16px);
   }
 
   to {
@@ -642,7 +647,7 @@ body.home-page main {
   }
 
   50% {
-    transform: translateY(-10px) rotate(var(--tile-tilt, -2deg));
+    transform: translateY(-4px) rotate(var(--tile-tilt, -2deg));
   }
 }
 
@@ -673,8 +678,8 @@ body.home-page main {
   }
 
   50% {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.18);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.14);
   }
 }
 
@@ -815,8 +820,8 @@ body.home-page main {
 
 .scroll-top-btn:hover,
 .scroll-top-btn:focus-visible {
-  transform: translateY(-3px);
-  box-shadow: 0 14px 28px rgba(255, 142, 60, 0.38);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 22px rgba(255, 142, 60, 0.32);
 }
 
 .scroll-top-btn i {
@@ -921,7 +926,7 @@ body.home-page main {
   *,
   *::before,
   *::after {
-    animation: none !important;
-    transition: none !important;
+    animation-duration: 1.2s !important;
+    transition-duration: 0.2s !important;
   }
 }

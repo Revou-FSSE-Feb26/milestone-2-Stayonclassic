@@ -218,6 +218,19 @@ Game complete
 Show result / reset option
 ```
 
+### Leaderboard
+```text
+Player finishes game
+↓
+Save score → localStorage
+↓
+Get all scores
+↓
+Sort highest → lowest
+↓
+Display top scores
+```
+
 ---
 
 ## Project Structure
@@ -283,3 +296,22 @@ The goal is to create a simple but well-structured interactive web application t
 ## Author
 
 Rio Leonardus
+
+## Reference Links
+
+### Rock Paper Scissors Game
+* https://youtu.be/jaVNP3nIAv0?si=QTmXD67Biyqd01gJ
+* https://youtu.be/1v-k3jhCY-Y?si=hHeR-bfVxhUlpz8w
+* https://youtu.be/RC7NbjwP3QA?si=lOgY0SAHB0NI-gLZ
+
+### Whack-a-Mole Game
+* https://youtu.be/FwZV5yZZhfw?si=pmbzC2dADKwYhshv
+* https://youtu.be/b20YueeXwZg?si=mnzO-lXh6wN4jhDd
+
+### Memory Game
+* https://youtu.be/dqqxkrKhfS4?si=4Y4z0pK79zyYSJQo
+* https://youtu.be/wz9jeI9M9hI?si=eeZ5u1gx-AyfXUOe
+
+### Leaderboard
+* https://youtu.be/PadfpqXwI2M?si=NRsL3wzADW3yy1EG
+* https://youtu.be/lCS6mzi180g?si=s2osslvaEGbSXPFY

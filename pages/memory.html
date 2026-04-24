@@ -6,16 +6,17 @@
   <title>Memory Match</title>
   <link rel="stylesheet" href="../css/game.css">
 </head>
+
 <body class="game-body game-memory">
   <main class="arcade-shell">
-    <!-- Page header -->
+    <!-- HEADER -->
     <header class="arcade-top">
       <p class="eyebrow">Focus Challenge</p>
       <h1>Digimon Memory Match</h1>
     </header>
 
     <div class="arcade-layout">
-      <!-- Sidebar: player input, stats, and controls -->
+      <!-- SIDEBAR : PLAYER INPUT, STATS, AND CONTROLS -->
       <aside class="arcade-sidebar">
         <div class="player-field">
           <label for="player-name">Player Name</label>
@@ -32,6 +33,7 @@
         <button id="memory-stop" class="memory-action hide" type="button">Stop Game</button>
 
         <div class="memory-controls" id="memory-controls">
+          <!-- LEVEL CHOSEN -->
           <div id="memory-result" aria-live="polite">Ready to test your Digimon memory?</div>
           <div class="level-picker" aria-label="Memory levels">
             <button class="level-option is-active" data-level="easy" type="button">Easy</button>
@@ -44,7 +46,7 @@
         <a class="back-link" href="../index.html">Back to Home</a>
       </aside>
 
-      <!-- Stage: memory grid -->
+      <!-- GAME STAGE : MEMORY GRID -->
       <section class="arcade-stage">
         <div class="stage-card">
           <div class="memory-grid tutorial-grid" id="memory-grid"></div>
