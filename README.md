@@ -2,9 +2,15 @@
 
 ## Overview
 
-RevoFun is a browser-based gaming platform that showcases interactive mini games built using **HTML, CSS, and JavaScript**. The project focuses on delivering a clean user experience while demonstrating core front-end development concepts such as **DOM manipulation, event handling, and game logic implementation**.
+RevoFun is a browser-based gaming platform that showcases interactive mini games built using **HTML, CSS, and JavaScript**.
 
-The platform is designed for casual users who want to play simple yet engaging games directly in the browser without any installation.
+This project focuses on:
+
+* Clean UI/UX
+* Interactive gameplay
+* Core frontend concepts (DOM manipulation, event handling, game logic)
+
+All games run directly in the browser — no installation needed.
 
 ---
 
@@ -12,22 +18,30 @@ The platform is designed for casual users who want to play simple yet engaging g
 
 ### Landing Page
 
-* Clean and modern UI design
+* Modern and clean UI design
 * Hero section with branding and tagline
-* Navigation to game pages
-* Game preview cards with interactive hover effects
+* Interactive game cards
+* Smooth animations and hover effects
+* Integrated leaderboard preview
 
-### Rock Paper Scissors Game
+---
 
-* Interactive gameplay with user vs computer
-* Random computer choice using JavaScript logic
-* Animated countdown: *Rock → Paper → Scissors → Shoot*
-* Dynamic result display (win, loss, draw)
+## Games
+
+### Rock Paper Scissors
+
+* Player vs Computer gameplay
+* Random computer logic
+* Animated countdown (*Rock → Paper → Scissors → Shoot*)
+* Dynamic result display (win / loss / draw)
 * Score tracking system
 * Reset functionality
-* Smooth UI animations and feedback
+* Interactive UI feedback
 
-### Whack-a-Mole Game
+---
+
+### Whack-a-Mole
+
 * Time-based reflex game
 * Random mole spawning system
 * Score increases on successful hits
@@ -36,27 +50,48 @@ The platform is designed for casual users who want to play simple yet engaging g
 * Hammer cursor interaction
 * Best score saving system
 
-### UI/UX Enhancements
+---
+
+### Memory Match
+
+* Card matching game using flip mechanics
+* Grid-based layout with multiple cards
+* Flip animation using CSS transform
+* Match detection logic
+* Move tracking system
+* Game completion detection
+* Reset and replay functionality
+
+---
+
+## Leaderboard System
+
+* Shared leaderboard across all games
+* Stores top scores using `localStorage`
+* Displays:
+  * Rock Paper Scissors results
+  * Whack-a-Mole scores
+  * Memory game performance
+* Keeps top entries (best scores)
+* Automatically updates after each game
+
+---
+
+## UI / UX Highlights
 
 * Consistent design system (spacing, colors, typography)
-* Responsive layout
+* Responsive layout (desktop + smaller screens)
 * Smooth animations and transitions
-* Hover and interaction feedback
-* Accessible elements (focus states, semantic HTML)
-
-### Footer Section
-
-* Logo and tagline
-* Quick navigation links
-* Social media links
+* Clear interaction feedback (hover, click, focus)
+* Accessible elements (focus-visible, semantic HTML)
 
 ---
 
 ## Technologies Used
 
-* **HTML5** — Structure and semantic layout
-* **CSS3** — Styling, layout (Flexbox/Grid), animations
-* **JavaScript (Vanilla)** — Game logic, DOM manipulation, event handling
+* **HTML5** → Structure and semantic layout
+* **CSS3** → Styling, layout (Flexbox & Grid), animations
+* **JavaScript (Vanilla)** → Game logic, DOM manipulation, event handling
 
 ---
 
@@ -64,27 +99,28 @@ The platform is designed for casual users who want to play simple yet engaging g
 
 ### JavaScript
 
-* Conditional statements (`if`, `switch`)
-* Loops (`forEach`)
+* DOM selection (`querySelector`, `getElementById`)
+* Event handling (`addEventListener`)
+* Conditional logic (`if`, `switch`)
 * Arrays and objects
-* Functions and modular structure
-* Event listeners (`addEventListener`)
-* DOM manipulation (`querySelector`, `getElementById`)
-* Timers (`setTimeout`) for animations
+* Game state management
+* Timers (`setTimeout`, `setInterval`)
+* Local storage (`localStorage`)
 
 ### CSS
 
 * Flexbox & Grid layout
-* Custom components (cards, buttons)
-* Animations using `@keyframes`
+* Component-based styling
+* Animations (`@keyframes`)
 * Transitions and hover effects
-* Consistent design system
+* Consistent UI system
 
 ---
 
 ## Game Logic Flow
 
-### Rock Paper Scissors Game
+### Rock Paper Scissors
+
 ```text
 User clicks a move (Rock / Paper / Scissors)
 ↓
@@ -104,24 +140,26 @@ getComputerChoice() (random move)
 ↓
 decideRound(playerChoice, computerChoice)
 
-IF same choice → Draw
-IF player wins → Add player score
-IF computer wins → Add computer score
+IF same choice → Draw  
+IF player wins → Add player score  
+IF computer wins → Add computer score  
 
 ↓
-Update UI (status text + preview images)
+Update UI (status + preview)
 ↓
-updateRpsScore() (wins / losses / draws)
+updateRpsScore()
 ↓
-Enable buttons again
+Enable buttons
 ↓
 Ready for next round
-
 ```
 
-### Whack-a-Mole Game
+---
+
+### Whack-a-Mole
+
 ```text
-User Click "Start Game"
+User clicks "Start Game"
 ↓
 startWhackGame()
 ↓
@@ -131,44 +169,67 @@ scheduleNextHole()
 ↓
 showNextMole()
 ↓
-Random hole becomes active (mole appears)
+Random mole appears
 ↓
 User clicks hole
 
-IF correct hole:
-→ Increase score
-→ Hide mole
-→ Show feedback ("Nice hit!")
+IF correct:
+→ Increase score  
+→ Hide mole  
 
-IF wrong / missed:
-→ No score added
+IF wrong:
+→ No score  
 
-↓
-hideCurrentMole() (after delay)
 ↓
 Next mole appears
+↓
+Timer counts down
+↓
+Time = 0 → endWhackGame()
+↓
+Save best score
+```
+
+---
+
+### Memory Match
+
+```text
+User clicks a card
+↓
+Flip card
+↓
+Select second card
+↓
+Check match
+
+IF match:
+→ Keep cards flipped  
+→ Increase match count  
+
+IF not match:
+→ Flip back after delay  
 
 ↓
-Countdown Timer (setInterval every 1s)
+Repeat until all matched
 ↓
-Time reaches 0
+Game complete
 ↓
-endWhackGame()
-↓
-Save best score + show result
+Show result / reset option
 ```
 
 ---
 
 ## Project Structure
 
-```
+```text
 milestone-2-Stayonclassic/
 │
 ├── index.html
 ├── pages/
 │   ├── rps.html
-│   └── whack.html
+│   ├── whack.html
+│   └── memory.html
 │
 ├── css/
 │   ├── style.css
@@ -176,7 +237,9 @@ milestone-2-Stayonclassic/
 │
 ├── js/
 │   ├── rps.js
-│   └── whack.js
+│   ├── whack.js
+│   ├── memory.js
+│   └── leaderboard.js
 │
 └── assets/
     ├── change.png
@@ -184,6 +247,12 @@ milestone-2-Stayonclassic/
     ├── digimon1.png
     ├── digimon2.png
     ├── digimon3.png
+    ├── digimon4.png
+    ├── digimon5.png
+    ├── digimon6.png
+    ├── digimon7.png
+    ├── digimon8.png
+    ├── digimon9.png
     ├── hammer.png
     ├── Mole.png
     ├── Paper.png
@@ -197,7 +266,7 @@ milestone-2-Stayonclassic/
 
 ---
 
-###  Live Demo
+## Live Demo
 
 https://revou-fsse-feb26.github.io/milestone-2-Stayonclassic/
 
@@ -205,21 +274,12 @@ https://revou-fsse-feb26.github.io/milestone-2-Stayonclassic/
 
 ## Notes
 
-This project was built as part of a learning assignment to strengthen fundamental web development skills, focusing on both **functionality and user experience**.
+This project was built as a learning assignment to strengthen fundamental frontend skills while focusing on both **functionality and user experience**.
+
+The goal is to create a simple but well-structured interactive web application that is easy to understand and explain.
 
 ---
 
-## Reference Links
+## Author
 
-### Rock Paper Scissors Game
-* https://youtu.be/jaVNP3nIAv0?si=QTmXD67Biyqd01gJ
-* https://youtu.be/1v-k3jhCY-Y?si=hHeR-bfVxhUlpz8w
-* https://youtu.be/RC7NbjwP3QA?si=lOgY0SAHB0NI-gLZ
-
-### Whack-a-Mole Game
-* https://youtu.be/FwZV5yZZhfw?si=pmbzC2dADKwYhshv
-* https://youtu.be/b20YueeXwZg?si=mnzO-lXh6wN4jhDd
-
-### Memory Game
-* https://youtu.be/dqqxkrKhfS4?si=4Y4z0pK79zyYSJQo
-* https://youtu.be/wz9jeI9M9hI?si=eeZ5u1gx-AyfXUOe
+Rio Leonardus
