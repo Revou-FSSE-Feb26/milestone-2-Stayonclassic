@@ -242,6 +242,10 @@ button:focus-visible,
   margin-top: auto;
 }
 
+.hide {
+  display: none !important;
+}
+
 /* =========================
    RPS
    ========================= */
@@ -486,6 +490,138 @@ button:focus-visible,
 }
 
 /* =========================
+   Memory
+   ========================= */
+.memory-grid,
+.tutorial-grid {
+  width: min(100%, 520px);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  perspective: 1000px;
+  align-content: center;
+}
+
+.card-container {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  min-height: 0;
+  padding: 0;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  appearance: none;
+  transform-style: preserve-3d;
+  transition: transform 0.35s ease;
+  cursor: pointer;
+}
+
+.card-container:hover:not(.flipped):not(.matched) {
+  transform: translateY(-1px);
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.18));
+}
+
+.card-before,
+.card-after {
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transition: transform 0.35s ease;
+}
+
+.card-before {
+  background: linear-gradient(145deg, #ffe566 0%, #e4b52a 100%);
+  color: #261734;
+  font-size: 1.65rem;
+  font-weight: 700;
+  transform: rotateY(0deg);
+  z-index: 2;
+}
+
+.card-after {
+  background: #fff;
+  transform: rotateY(180deg);
+  padding: 6px;
+  z-index: 1;
+}
+
+.card-after img.image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.card-container.flipped .card-before,
+.card-container.matched .card-before {
+  transform: rotateY(-180deg);
+}
+
+.card-container.flipped .card-after,
+.card-container.matched .card-after {
+  transform: rotateY(0deg);
+}
+
+.card-container.matched {
+  box-shadow: 0 0 0 2px rgba(255, 217, 112, 0.45);
+}
+
+.stats-container > div {
+  min-width: 0;
+  padding: 8px;
+  border-radius: 10px;
+  background: #fff;
+  color: #2b2037;
+  font-size: 0.84rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.stats-container,
+.level-picker {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.stats-container span {
+  margin-right: 4px;
+  color: #8a6210;
+}
+
+.memory-controls {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 12px;
+  background: linear-gradient(160deg, #ffe566 0%, #e8b420 100%);
+  color: #2a1d34;
+}
+
+.memory-action {
+  background: #111;
+  color: #fff;
+}
+
+.level-option {
+  background: rgba(39, 28, 51, 0.16);
+  color: #2a1e35;
+  font-size: 0.9rem;
+  line-height: 1.1;
+}
+
+.level-option.is-active {
+  background: #23182f;
+  color: #fff;
+}
+
+/* =========================
    Animations + utilities
    ========================= */
 .is-pulsing {
@@ -543,4 +679,76 @@ button:focus-visible,
   0% { transform: translateX(-50%) translateY(100%) scale(0.82); opacity: 0; }
   65% { transform: translateX(-50%) translateY(-4%) scale(1.05); opacity: 1; }
   100% { transform: translateX(-50%) translateY(0) scale(1); opacity: 1; }
+}
+
+/* =========================
+   Responsive
+   ========================= */
+@media (max-width: 1024px) {
+  body.game-body {
+    height: auto;
+    overflow: auto;
+  }
+
+  .arcade-shell {
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .arcade-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .arcade-sidebar {
+    order: 2;
+  }
+
+  .arcade-stage {
+    order: 1;
+    min-height: 420px;
+    padding: 0;
+  }
+
+  .stage-card {
+    min-height: 420px;
+  }
+
+  .memory-grid,
+  .tutorial-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .arcade-shell {
+    padding: 10px;
+  }
+
+  .arcade-top {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .rps-hud,
+  .stats-container,
+  .level-picker {
+    grid-template-columns: 1fr;
+  }
+
+  .game-rps .stage-card > .game-actions {
+    flex-wrap: wrap;
+  }
+
+  .rps-choice {
+    width: 100%;
+    max-width: 200px;
+  }
+
+  .versus-preview {
+    grid-template-columns: 1fr;
+  }
+
+  .hammer-cursor {
+    display: none;
+  }
 }

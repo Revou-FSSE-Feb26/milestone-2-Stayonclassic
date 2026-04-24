@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory Match</title>
+  <link rel="stylesheet" href="../css/game.css">
+</head>
+<body class="game-body game-memory">
+  <main class="arcade-shell">
+    <!-- Page header -->
+    <header class="arcade-top">
+      <p class="eyebrow">Focus Challenge</p>
+      <h1>Digimon Memory Match</h1>
+    </header>
+
+    <div class="arcade-layout">
+      <!-- Sidebar: player input, stats, and controls -->
+      <aside class="arcade-sidebar">
+        <div class="player-field">
+          <label for="player-name">Player Name</label>
+          <input id="player-name" type="text" maxlength="20" placeholder="Enter player name" aria-describedby="memory-player-help">
+          <p class="helper-text" id="memory-player-help">Use nickname for saved runs.</p>
+        </div>
+
+        <div class="stats-container" aria-label="Memory game stats">
+          <div id="memory-level-badge"></div>
+          <div id="moves-count"></div>
+          <div id="time"></div>
+        </div>
+
+        <button id="memory-stop" class="memory-action hide" type="button">Stop Game</button>
+
+        <div class="memory-controls" id="memory-controls">
+          <div id="memory-result" aria-live="polite">Ready to test your Digimon memory?</div>
+          <div class="level-picker" aria-label="Memory levels">
+            <button class="level-option is-active" data-level="easy" type="button">Easy</button>
+            <button class="level-option" data-level="normal" type="button">Normal</button>
+            <button class="level-option" data-level="hard" type="button">Hard</button>
+          </div>
+          <button id="memory-start" type="button">Start Game</button>
+        </div>
+
+        <a class="back-link" href="../index.html">Back to Home</a>
+      </aside>
+
+      <!-- Stage: memory grid -->
+      <section class="arcade-stage">
+        <div class="stage-card">
+          <div class="memory-grid tutorial-grid" id="memory-grid"></div>
+          <!-- Status output -->
+          <p class="status status-panel">Find all matching pairs with the fewest moves.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="../js/leaderboard.js"></script>
+  <script src="../js/memory.js"></script>
+</body>
+</html>

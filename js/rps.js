@@ -1,7 +1,7 @@
-// Rock Paper Scissors
-// Player picks a move, computer picks random, then score updates.
+// Rock Paper Scissors game.
+// Player picks a move, CPU picks random, then score updates.
 
-// ===== Get elements from HTML =====
+// ===== Get elements =====
 const rpsButtons = document.querySelectorAll(".rps-choice");
 const rpsWins = document.getElementById("rps-wins");
 const rpsLosses = document.getElementById("rps-losses");
@@ -27,40 +27,40 @@ const score = {
   draws: 0,
 };
 
-// ===== Timing setup =====
+// ===== Round timing =====
 const countdownSteps = ["Rock...", "Paper...", "Scissors...", "Shoot!"];
 const COUNTDOWN_STEP_MS = 170;
 const COUNTDOWN_FINAL_DELAY_MS = 60;
 const SHAKE_DURATION_MS = 820;
 const RESULT_POP_MS = 320;
 
-// ===== Variables that change while playing =====
+// ===== Game state =====
 let bestPlayerScore = 0;
 let isResolvingRound = false;
 let countdownTimerIds = [];
 let duelShakeTimerId = 0;
 
-// Update status text when round state changes.
+// Update the result text.
 function setStatusText(text) {
   rpsStatus.textContent = text;
   pulseElement(rpsStatus);
 }
 
-// Lock/unlock move buttons.
+// Enable or disable move buttons.
 function setButtonsDisabled(disabled) {
   rpsButtons.forEach((button) => {
     button.disabled = disabled;
   });
 }
 
-// Highlight the move selected by player.
+// Highlight the selected move.
 function updateSelectedChoice(choice) {
   rpsButtons.forEach((button) => {
     button.classList.toggle("is-selected", button.dataset.choice === choice);
   });
 }
 
-// Show latest score values on screen.
+// Update score text on screen.
 function updateRpsScore() {
   rpsWins.textContent = String(score.player);
   rpsLosses.textContent = String(score.computer);
@@ -69,14 +69,14 @@ function updateRpsScore() {
   pulseElement(rpsScore);
 }
 
-// Play simple pulse effect to make text updates clear.
+// Add a quick pulse effect.
 function pulseElement(element) {
   element.classList.remove("is-pulsing");
   void element.offsetWidth;
   element.classList.add("is-pulsing");
 }
 
-// Stop all running timers before next action.
+// Clear all running timers.
 function clearCountdownTimers() {
   countdownTimerIds.forEach((timerId) => {
     window.clearTimeout(timerId);
@@ -87,13 +87,13 @@ function clearCountdownTimers() {
   countdownTimerIds = [];
 }
 
-// Pick random move for computer.
+// Pick a random move for CPU.
 function getComputerChoice() {
   const index = Math.floor(Math.random() * rpsChoices.length);
   return rpsChoices[index];
 }
 
-// Compare both moves and decide result.
+// Compare both moves and get result.
 function decideRound(playerChoice, computerChoice) {
   if (playerChoice === computerChoice) {
     score.draws += 1;
@@ -134,7 +134,7 @@ function decideRound(playerChoice, computerChoice) {
   };
 }
 
-// Start one round when player clicks a move button.
+// Start one round.
 function playRound(playerChoice) {
   if (isResolvingRound) {
     return;
@@ -172,7 +172,7 @@ function runCountdown(playerChoice) {
   countdownTimerIds.push(resolveTimer);
 }
 
-// Run one-time result animation.
+// Play one result animation.
 function playResultAnimation() {
   rpsStatus.classList.remove("animate-pop");
   void rpsStatus.offsetWidth;
@@ -182,7 +182,7 @@ function playResultAnimation() {
   }, RESULT_POP_MS);
 }
 
-// Save score only if it beats current best score in this session.
+// Save score only if it's the best this session.
 function saveBestRpsScore() {
   if (!window.RevoLeaderboard || score.player <= bestPlayerScore) {
     return;
@@ -197,7 +197,7 @@ function saveBestRpsScore() {
   );
 }
 
-// Finish round after countdown ends.
+// Finish the round after countdown.
 function resolveRound(playerChoice) {
   const computerChoice = getComputerChoice();
   const roundResult = decideRound(playerChoice, computerChoice);
@@ -217,7 +217,7 @@ function resolveRound(playerChoice) {
   setButtonsDisabled(false);
 }
 
-// Reset everything when reset button is clicked.
+// Reset the whole game.
 function resetRpsGame() {
   clearCountdownTimers();
   score.player = 0;
