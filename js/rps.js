@@ -33,12 +33,16 @@ const COUNTDOWN_STEP_MS = 170;
 const COUNTDOWN_FINAL_DELAY_MS = 60;
 const SHAKE_DURATION_MS = 820;
 const RESULT_POP_MS = 320;
+const RESULT_BURST_MS = 760;
+const RESULT_TEXT_FEEDBACK_MS = 700;
 
 // ===== Game state =====
 let bestPlayerScore = 0;
 let isResolvingRound = false;
 let countdownTimerIds = [];
 let duelShakeTimerId = 0;
+let roundBurstTimerId = 0;
+let resultTextTimerId = 0;
 
 // Update the result text.
 function setStatusText(text) {
@@ -76,15 +80,85 @@ function pulseElement(element) {
   element.classList.add("is-pulsing");
 }
 
+// Format move name for result text.
+function formatChoiceLabel(choice) {
+  return choice.charAt(0).toUpperCase() + choice.slice(1);
+}
+
 // Clear all running timers.
 function clearCountdownTimers() {
   countdownTimerIds.forEach((timerId) => {
     window.clearTimeout(timerId);
   });
   window.clearTimeout(duelShakeTimerId);
+  window.clearTimeout(roundBurstTimerId);
+  window.clearTimeout(resultTextTimerId);
   duelShakeTimerId = 0;
+  roundBurstTimerId = 0;
+  resultTextTimerId = 0;
   rpsPreview.classList.remove("is-duel-shake");
+  rpsPreview.classList.remove("result-win", "result-loss", "result-draw", "result-burst");
+  rpsStatus.classList.remove("is-result-emphasis");
   countdownTimerIds = [];
+}
+
+// show win animation / lose / draw highlight on round result
+function animateRoundFeedback(outcome) {
+  rpsPreview.classList.remove("result-win", "result-loss", "result-draw", "result-burst");
+  void rpsPreview.offsetWidth;
+
+  if (outcome === "win") {
+    rpsPreview.classList.add("result-win");
+  } else if (outcome === "loss") {
+    rpsPreview.classList.add("result-loss");
+  } else {
+    rpsPreview.classList.add("result-draw");
+  }
+
+  // Keep state visible, but play one short burst animation.
+  rpsPreview.classList.add("result-burst");
+  window.clearTimeout(roundBurstTimerId);
+  roundBurstTimerId = window.setTimeout(() => {
+    rpsPreview.classList.remove("result-burst");
+    roundBurstTimerId = 0;
+  }, RESULT_BURST_MS);
+}
+
+// emphasize round result text
+function animateResultText() {
+  rpsStatus.classList.remove("is-result-emphasis");
+  void rpsStatus.offsetWidth;
+  rpsStatus.classList.add("is-result-emphasis");
+
+  window.clearTimeout(resultTextTimerId);
+  resultTextTimerId = window.setTimeout(() => {
+    rpsStatus.classList.remove("is-result-emphasis");
+    resultTextTimerId = 0;
+  }, RESULT_TEXT_FEEDBACK_MS);
+}
+
+// Keep shared arcade result class names consistent.
+function setSharedResultClass(outcome) {
+  rpsStatus.classList.remove("result-state-success", "result-state-end", "result-state-neutral");
+
+  if (outcome === "win") {
+    rpsStatus.classList.add("result-state-success");
+  } else if (outcome === "loss") {
+    rpsStatus.classList.add("result-state-end");
+  } else if (outcome === "draw") {
+    rpsStatus.classList.add("result-state-neutral");
+  }
+}
+
+// apply win state / lose / draw to UI
+function applyRoundOutcomeState(outcome) {
+  rpsStatus.dataset.outcome = outcome;
+  setSharedResultClass(outcome);
+  // show result feedback
+  animateRoundFeedback(outcome);
+  animateResultText();
+  // animate round result
+  playResultAnimation();
 }
 
 // Pick a random move for CPU.
@@ -95,10 +169,13 @@ function getComputerChoice() {
 
 // Compare both moves and get result.
 function decideRound(playerChoice, computerChoice) {
+  const playerMove = formatChoiceLabel(playerChoice);
+  const computerMove = formatChoiceLabel(computerChoice);
+
   if (playerChoice === computerChoice) {
     score.draws += 1;
     return {
-      message: `Draw. You both picked ${playerChoice}.`,
+      message: `Draw. Both chose ${playerMove}.`,
       outcome: "draw",
     };
   }
@@ -122,14 +199,14 @@ function decideRound(playerChoice, computerChoice) {
   if (playerWins) {
     score.player += 1;
     return {
-      message: `You win. ${playerChoice} beats ${computerChoice}.`,
+      message: `You Win. ${playerMove} beats ${computerMove}.`,
       outcome: "win",
     };
   }
 
   score.computer += 1;
   return {
-    message: `Computer wins. ${computerChoice} beats ${playerChoice}.`,
+    message: `You Lose. ${computerMove} beats ${playerMove}.`,
     outcome: "loss",
   };
 }
@@ -140,6 +217,7 @@ function playRound(playerChoice) {
     return;
   }
 
+  window.RevoAudio?.playSfx("flip");
   clearCountdownTimers();
   isResolvingRound = true;
   setButtonsDisabled(true);
@@ -208,8 +286,13 @@ function resolveRound(playerChoice) {
   rpsPreview.classList.add("is-resolving");
 
   setStatusText(roundResult.message);
-  rpsStatus.dataset.outcome = roundResult.outcome;
-  playResultAnimation();
+  // apply win state
+  applyRoundOutcomeState(roundResult.outcome);
+  if (roundResult.outcome === "win") {
+    window.RevoAudio?.playSfx("win");
+  } else if (roundResult.outcome === "loss") {
+    window.RevoAudio?.playSfx("lose");
+  }
 
   isResolvingRound = false;
   saveBestRpsScore();
@@ -231,6 +314,7 @@ function resetRpsGame() {
   computerPreview.src = rpsImages.scissors;
   rpsPreview.classList.remove("is-dueling", "is-duel-shake", "is-resolving");
   rpsStatus.dataset.outcome = "idle";
+  rpsStatus.classList.remove("result-state-success", "result-state-end", "result-state-neutral");
   rpsStatus.textContent = "Choose your move to begin the showdown.";
   updateRpsScore();
 }

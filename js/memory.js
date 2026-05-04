@@ -55,6 +55,11 @@ let minutes = 0;
 let movesCount = 0;
 let winCount = 0;
 let bestSavedScore = 0;
+let memoryCompleteTimerId = 0;
+let memoryBurstTimerId = 0;
+const MEMORY_COMPLETE_DELAY_MS = 380;
+const MATCH_BURST_MS = 520;
+const MISMATCH_SOFT_MS = 900;
 
 // ===== UI and timer helpers =====
 // Get settings for selected level.
@@ -165,17 +170,40 @@ function getIntroText(initial = false) {
 // Stop timer and show intro or result.
 function stopGame(won = false, initial = false) {
   window.clearInterval(interval);
+  window.clearTimeout(memoryCompleteTimerId);
+  window.clearTimeout(memoryBurstTimerId);
+  memoryCompleteTimerId = 0;
+  memoryBurstTimerId = 0;
+  if (!won) {
+    gameContainer.classList.remove("is-complete-highlight", "is-complete-burst");
+    result.classList.remove(
+      "is-memory-result-celebrate",
+      "result-state-complete",
+      "result-burst"
+    );
+  }
   controls.classList.remove("hide");
   stopButton.classList.add("hide");
   startButton.textContent = won ? "Play Again" : initial ? "Start Game" : "Start New Round";
 
   if (won) {
     saveMemoryScore();
+    // highlight result message
+    result.classList.add("result-state-complete");
+    result.classList.add("is-memory-result-celebrate");
+    result.classList.add("result-burst");
+    memoryBurstTimerId = window.setTimeout(() => {
+      result.classList.remove("is-memory-result-celebrate");
+      result.classList.remove("result-burst");
+      gameContainer.classList.remove("is-complete-burst");
+      memoryBurstTimerId = 0;
+    }, 820);
     result.innerHTML = `
-      <h2>You Won</h2>
+      <h2>Completed - All Matched!</h2>
       <h4>Level: ${getLevelConfig().label}</h4>
       <h4>Moves: ${movesCount}</h4>
       <h4>Time: ${formatTime()}</h4>
+      <h4 class="result-action-hint">Press Play Again to start a new run.</h4>
     `;
     return;
   }
@@ -242,10 +270,19 @@ function canFlipCard(card) {
 
 // Mark both cards as matched.
 function markMatchedCards() {
-  firstCard.classList.remove("flipped");
-  secondCard.classList.remove("flipped");
-  firstCard.classList.add("matched");
-  secondCard.classList.add("matched");
+  const matchedFirst = firstCard;
+  const matchedSecond = secondCard;
+  // animate matched cards
+  matchedFirst.classList.add("is-match-burst");
+  matchedSecond.classList.add("is-match-burst");
+  matchedFirst.classList.remove("flipped");
+  matchedSecond.classList.remove("flipped");
+  matchedFirst.classList.add("matched");
+  matchedSecond.classList.add("matched");
+  window.setTimeout(() => {
+    matchedFirst.classList.remove("is-match-burst");
+    matchedSecond.classList.remove("is-match-burst");
+  }, MATCH_BURST_MS);
   firstCard = false;
   secondCard = false;
   winCount += 1;
@@ -253,11 +290,16 @@ function markMatchedCards() {
 
 // Flip unmatched cards back after delay.
 function resetUnmatchedCards(previousFirst, previousSecond) {
+  // show a soft wrong-match state before flipping back
+  previousFirst.classList.add("is-mismatch-soft");
+  previousSecond.classList.add("is-mismatch-soft");
   window.setTimeout(() => {
+    previousFirst.classList.remove("is-mismatch-soft");
+    previousSecond.classList.remove("is-mismatch-soft");
     previousFirst.classList.remove("flipped");
     previousSecond.classList.remove("flipped");
     isBoardLocked = false;
-  }, 900);
+  }, MISMATCH_SOFT_MS);
 }
 
 // Handle card click during game.
@@ -266,7 +308,9 @@ function handleCardClick(card, totalPairs) {
     return;
   }
 
+  // card interaction feedback
   card.classList.add("flipped");
+  window.RevoAudio?.playSfx("flip");
 
   if (!firstCard) {
     firstCard = card;
@@ -277,9 +321,17 @@ function handleCardClick(card, totalPairs) {
   secondCard = card;
 
   if (firstCard.dataset.cardValue === secondCard.dataset.cardValue) {
+    // handle match
     markMatchedCards();
+    window.RevoAudio?.playSfx("hit");
     if (winCount === totalPairs) {
-      stopGame(true);
+      // show win animation
+      showMemoryCompleteAnimation();
+      isBoardLocked = true;
+      window.RevoAudio?.playSfx("win");
+      memoryCompleteTimerId = window.setTimeout(() => {
+        stopGame(true);
+      }, MEMORY_COMPLETE_DELAY_MS);
     }
     return;
   }
@@ -296,9 +348,27 @@ function handleCardClick(card, totalPairs) {
 // ===== Start game and events =====
 // Start a fresh board with reset stats.
 function initializer() {
+  window.clearTimeout(memoryCompleteTimerId);
+  window.clearTimeout(memoryBurstTimerId);
+  memoryCompleteTimerId = 0;
+  memoryBurstTimerId = 0;
+  gameContainer.classList.remove("is-complete-highlight", "is-complete-burst");
+  result.classList.remove(
+    "is-memory-result-celebrate",
+    "result-state-complete",
+    "result-burst"
+  );
   resetStats();
   const cardValues = generateRandom();
   matrixGenerator(cardValues);
+}
+
+// animate game complete before final message
+function showMemoryCompleteAnimation() {
+  gameContainer.classList.remove("is-complete-highlight", "is-complete-burst");
+  void gameContainer.offsetWidth;
+  gameContainer.classList.add("is-complete-highlight");
+  gameContainer.classList.add("is-complete-burst");
 }
 
 levelButtons.forEach((button) => {

@@ -10,6 +10,10 @@ const whackResetButton = document.getElementById("whack-reset");
 const whackStage = document.getElementById("whack-stage");
 const whackGrid = document.getElementById("whack-grid");
 const hammerCursor = document.getElementById("hammer-cursor");
+const whackResultCard = document.getElementById("whack-result-card");
+const whackResultScore = document.getElementById("whack-result-score");
+const whackResultBest = document.getElementById("whack-result-best");
+const whackPlayAgainButton = document.getElementById("whack-play-again");
 const whackHoles = Array.from(document.querySelectorAll(".whack-hole"));
 
 // ===== Game state =====
@@ -23,6 +27,8 @@ let nextHoleTimer = 0;
 let countdownTimer = 0;
 let cursorReleaseTimer = 0;
 let bestSavedScore = 0;
+let gameOverBurstTimerId = 0;
+let gameOverTextTimerId = 0;
 
 // ===== UI helpers =====
 // Add a pulse effect to updated text.
@@ -44,6 +50,84 @@ function clearWhackTimers() {
   window.clearInterval(countdownTimer);
   window.clearTimeout(hideTimer);
   window.clearTimeout(nextHoleTimer);
+  window.clearTimeout(gameOverBurstTimerId);
+  window.clearTimeout(gameOverTextTimerId);
+  gameOverBurstTimerId = 0;
+  gameOverTextTimerId = 0;
+}
+
+// Lock or unlock hole interactions.
+function setWhackInteractionLocked(locked) {
+  whackHoles.forEach((hole) => {
+    hole.disabled = locked;
+  });
+}
+
+// Show or hide the mini victory panel.
+function setWhackResultVisible(visible) {
+  if (!whackResultCard) {
+    return;
+  }
+
+  if (!visible) {
+    whackResultCard.classList.add("hide");
+    whackResultCard.classList.remove("is-visible");
+    return;
+  }
+
+  whackResultCard.classList.remove("is-visible");
+  void whackResultCard.offsetWidth;
+  whackResultCard.classList.remove("hide");
+  whackResultCard.classList.add("is-visible");
+}
+
+// animate game over with subtle score highlight
+function animateWhackGameOver() {
+  whackScore.classList.remove("is-game-over-pop", "is-game-over-state");
+  whackStatus.classList.remove("is-game-over-panel", "is-game-over-state");
+  void whackScore.offsetWidth;
+
+  // Keep the game-over state visible after animation.
+  whackScore.classList.add("is-game-over-state");
+  whackStatus.classList.add("is-game-over-state");
+  whackStage.classList.add("is-game-over");
+  whackGrid.classList.add("is-game-over");
+  whackScore.classList.add("is-game-over-pop");
+  whackStatus.classList.add("is-game-over-panel");
+
+  // Remove only burst classes, keep final state classes.
+  gameOverBurstTimerId = window.setTimeout(() => {
+    whackScore.classList.remove("is-game-over-pop");
+    whackStatus.classList.remove("is-game-over-panel");
+    gameOverBurstTimerId = 0;
+  }, 900);
+}
+
+// emphasize game over text
+function animateGameOverText() {
+  whackStatus.classList.remove("is-result-emphasis");
+  void whackStatus.offsetWidth;
+  whackStatus.classList.add("is-result-emphasis");
+
+  gameOverTextTimerId = window.setTimeout(() => {
+    whackStatus.classList.remove("is-result-emphasis");
+    gameOverTextTimerId = 0;
+  }, 760);
+}
+
+// Apply shared arcade result classes.
+function setWhackResultClass() {
+  whackStatus.classList.remove("result-state-success", "result-state-end", "result-state-neutral");
+  whackResultCard?.classList.remove("result-state-success", "result-state-end", "result-state-neutral");
+
+  if (score >= 10) {
+    whackStatus.classList.add("result-state-success");
+    whackResultCard?.classList.add("result-state-success");
+    return;
+  }
+
+  whackStatus.classList.add("result-state-end");
+  whackResultCard?.classList.add("result-state-end");
 }
 
 // ===== Mole flow =====
@@ -124,6 +208,12 @@ function moveHammer(event) {
     return;
   }
 
+  // Freeze stage pointer feedback when game is not active.
+  if (!gameActive) {
+    hammerCursor.classList.add("hide");
+    return;
+  }
+
   const stageRect = whackStage.getBoundingClientRect();
   const withinStage =
     event.clientX >= stageRect.left &&
@@ -149,6 +239,10 @@ function triggerHammerSwing() {
     return;
   }
 
+  if (!gameActive) {
+    return;
+  }
+
   window.clearTimeout(cursorReleaseTimer);
   setHammerActive(true);
   cursorReleaseTimer = window.setTimeout(() => {
@@ -164,6 +258,8 @@ function stopWhackGame() {
   clearHoleState();
   whackGrid.classList.remove("is-live");
   whackStartButton.disabled = false;
+  setWhackInteractionLocked(true);
+  hammerCursor.classList.add("hide");
   updateWhackHud();
 }
 
@@ -186,8 +282,25 @@ function saveWhackScore() {
 function endWhackGame() {
   stopWhackGame();
   saveWhackScore();
-  whackStatus.textContent = `Time's up. Final score: ${score}.`;
+  setWhackResultVisible(true);
+  whackResultScore.textContent = `Final score: ${score}`;
+  whackResultBest.textContent = `Best this session: ${bestSavedScore}`;
+  setWhackResultClass();
+  whackStatus.innerHTML = `
+    <strong>Game Over.</strong> Final score: ${score}.<br>
+    <span class="status-subline">Best this session: ${bestSavedScore}.</span><br>
+    <span class="status-subline result-action-hint">Press Play Again to start a new run.</span>
+  `;
   pulseElement(whackStatus);
+  // highlight result
+  animateWhackGameOver();
+  // animate game over text
+  animateGameOverText();
+  if (score >= 10) {
+    window.RevoAudio?.playSfx("win");
+  } else {
+    window.RevoAudio?.playSfx("lose");
+  }
 }
 
 // Start a fresh game.
@@ -195,7 +308,21 @@ function startWhackGame() {
   stopWhackGame();
   score = 0;
   timeLeft = 20;
+  setWhackResultVisible(false);
+  whackStage.classList.remove("is-game-over");
+  whackGrid.classList.remove("is-game-over");
+  whackScore.classList.remove("is-game-over-pop", "is-game-over-state");
+  whackStatus.classList.remove(
+    "is-game-over-panel",
+    "is-game-over-state",
+    "is-result-emphasis",
+    "result-state-success",
+    "result-state-end",
+    "result-state-neutral"
+  );
+  whackResultCard?.classList.remove("result-state-success", "result-state-end", "result-state-neutral");
   gameActive = true;
+  setWhackInteractionLocked(false);
   updateWhackHud();
   whackStatus.textContent = "Whack every mole before it ducks.";
   whackGrid.classList.add("is-live");
@@ -218,6 +345,19 @@ function resetWhackGame() {
   stopWhackGame();
   score = 0;
   timeLeft = 20;
+  setWhackResultVisible(false);
+  whackStage.classList.remove("is-game-over");
+  whackGrid.classList.remove("is-game-over");
+  whackScore.classList.remove("is-game-over-pop", "is-game-over-state");
+  whackStatus.classList.remove(
+    "is-game-over-panel",
+    "is-game-over-state",
+    "is-result-emphasis",
+    "result-state-success",
+    "result-state-end",
+    "result-state-neutral"
+  );
+  whackResultCard?.classList.remove("result-state-success", "result-state-end", "result-state-neutral");
   updateWhackHud();
   whackStatus.textContent = "Press start to begin.";
   pulseElement(whackStatus);
@@ -232,6 +372,7 @@ whackHoles.forEach((hole, index) => {
     }
 
     triggerHammerSwing();
+    window.RevoAudio?.playSfx("hit");
     score += 1;
     updateWhackHud();
     pulseElement(whackScore);
@@ -265,5 +406,8 @@ window.addEventListener("mouseup", () => {
 
 whackStartButton.addEventListener("click", startWhackGame);
 whackResetButton.addEventListener("click", resetWhackGame);
+if (whackPlayAgainButton) {
+  whackPlayAgainButton.addEventListener("click", startWhackGame);
+}
 
 resetWhackGame();

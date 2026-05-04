@@ -54,6 +54,12 @@
               <button class="whack-hole" type="button" data-hole="8" aria-label="Mole hole 9"><img src="../assets/Mole.png" alt="Mole"></button>
             </div>
             <div class="hammer-cursor hide" id="hammer-cursor" aria-hidden="true"></div>
+            <section class="whack-result-card hide" id="whack-result-card" aria-live="polite">
+              <p class="whack-result-title" id="whack-result-title">Game Over</p>
+              <p class="whack-result-score" id="whack-result-score">Final score: 0</p>
+              <p class="whack-result-best" id="whack-result-best">Best this session: 0</p>
+              <button id="whack-play-again" type="button">Play Again</button>
+            </section>
           </div>
 
           <p class="status status-panel" id="whack-status" aria-live="polite">Press start to begin.</p>
@@ -62,6 +68,7 @@
     </div>
   </main>
 
+  <script src="../js/audio.js"></script>
   <script src="../js/leaderboard.js"></script>
   <script src="../js/whack.js"></script>
 </body>

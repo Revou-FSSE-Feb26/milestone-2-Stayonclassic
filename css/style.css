@@ -526,7 +526,7 @@ body.home-page main {
 }
 
 .leaderboard-empty {
-  color: var(--muted);
+  color: rgba(248, 243, 255, 0.78);
 }
 
 .leaderboard-actions {
@@ -795,7 +795,7 @@ body.home-page main {
 
 .footer-bottom p {
   margin: 0;
-  color: var(--muted);
+  color: rgba(248, 243, 255, 0.78);
   font-size: 0.86rem;
 }
 
@@ -826,6 +826,33 @@ body.home-page main {
 
 .scroll-top-btn i {
   font-size: 1.3rem;
+}
+
+.audio-toggle {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  min-height: 38px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(7, 6, 14, 0.72);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  z-index: 20;
+  backdrop-filter: blur(10px);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.audio-toggle:hover,
+.audio-toggle:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(92, 242, 255, 0.8);
 }
 
 /* =========================
@@ -916,6 +943,14 @@ body.home-page main {
     width: 40px;
     height: 40px;
   }
+
+  .audio-toggle {
+    top: 12px;
+    right: 12px;
+    min-height: 34px;
+    padding-inline: 10px;
+    font-size: 0.7rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -923,10 +958,38 @@ body.home-page main {
     scroll-behavior: auto;
   }
 
-  *,
-  *::before,
-  *::after {
-    animation-duration: 1.2s !important;
-    transition-duration: 0.2s !important;
+  /* Reduced motion: keep visual states, remove decorative movement */
+  .hero,
+  .games-section,
+  .leaderboard-section,
+  .showcase-tile,
+  .hero-marquee span {
+    animation: none !important;
+  }
+
+  .showcase-tile:hover,
+  .card:hover,
+  .card:focus-within,
+  .btn:hover,
+  .btn:focus-visible,
+  .card-link:hover,
+  .card-link:focus-visible,
+  .nav nav a:hover,
+  .nav nav a:focus-visible,
+  .scroll-top-btn:hover,
+  .scroll-top-btn:focus-visible {
+    transform: none !important;
+  }
+
+  .btn,
+  .card-link,
+  .card,
+  .showcase-tile,
+  .nav nav a,
+  .footer-links a,
+  .footer-social-list a,
+  .scroll-top-btn,
+  .audio-toggle {
+    transition-duration: 0.01ms !important;
   }
 }
